@@ -13,15 +13,15 @@ const app = express();
 app.use(express.json())
 
 app.post("/hdfcWebhook", async (req, res) => {
-    //TODO: HDFC bank should ideally send us a secret so we know this is sent by them
+
     const {success} = paymentInformationInput.safeParse({token: req.body.token,userId: req.body.user_identifier,amount: req.body.amount})
-    
+
     if(!success)
-    {
-        res.status(403).json({
-            message: "Wrong Payment Infomation"
-        })
-    }
+        {
+            res.status(403).json({
+                message: "Wrong Payment Infomation"
+            })
+        }
 
     const paymentInformation: {
         token: string;
