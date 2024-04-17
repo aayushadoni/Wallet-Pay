@@ -20,35 +20,12 @@ async function getBalance() {
 
 async function getP2pTransactions() {
     const session = await getServerSession(authOptions);
-    const user = await prisma.user.findUnique({
+    const txns = await prisma.p2pTransfer.findMany({
         where: {
-            id: Number(session?.user?.id)
-        },
-        include: {
-            sentTransfers: true,
-            receivedTransfers: true
+            toUserId: Number(session?.user?.id)
         }
     });
-
-    const allTransactions = [
-        ...(user?.sentTransfers ?? []).map(transfer => ({
-            ...transfer,
-            type: "SentTransfer",
-            amount: -transfer.amount
-        })),
-        ...(user?.receivedTransfers ?? []).map(transfer => ({
-            ...transfer,
-            type: "ReceivedTransfer"
-        }))
-    ];
-
-    allTransactions.sort((a, b) => {
-        const timeA = a.timestamp;
-        const timeB = b.timestamp;
-        return timeB.getTime() - timeA.getTime();
-    });
-
-    return allTransactions.map(t => ({
+    return txns.map(t => ({
         time: t.timestamp,
         amount: t.amount,
         from:t.fromUserId

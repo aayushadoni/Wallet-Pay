@@ -34,6 +34,7 @@ model p2pTransfer {
   fromUser   User         @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
   toUserId   Int
   toUser     User         @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+  note       TransactionNote
 }
 
 model OnRampTransaction {
@@ -64,4 +65,13 @@ enum OnRampStatus {
   Success
   Failure
   Processing
+}
+
+enum TransactionNote {
+  Food_Dining
+  Entertainment
+  Investment
+  Utilities
+  Transportation
+  P2P
 }

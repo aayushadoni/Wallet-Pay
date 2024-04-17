@@ -2,13 +2,14 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
+  // Create users with OnRamp transactions
   const alice = await prisma.user.upsert({
     where: { number: '1234567890' },
     update: {},
     create: {
       number: '1234567890',
       password: 'alice',
-      name: 'alice',
+      name: 'Alice',
       OnRampTransaction: {
         create: {
           startTime: new Date(),
@@ -19,14 +20,15 @@ async function main() {
         },
       },
     },
-  })
+  });
+
   const bob = await prisma.user.upsert({
     where: { number: '9999999998' },
     update: {},
     create: {
       number: '9999999998',
       password: 'bob',
-      name: 'bob',
+      name: 'Bob',
       OnRampTransaction: {
         create: {
           startTime: new Date(),
@@ -37,9 +39,31 @@ async function main() {
         },
       },
     },
-  })
-  console.log({ alice, bob })
+  });
+
+  // Create P2P transactions
+  await prisma.p2pTransfer.createMany({
+    data: [
+      {
+        amount: 1000,
+        timestamp: new Date(),
+        fromUserId: alice.id,
+        toUserId: bob.id,
+        note: "Food_Dining",
+      },
+      {
+        amount: 1500,
+        timestamp: new Date(),
+        fromUserId: bob.id,
+        toUserId: alice.id,
+        note: "Utilities",
+      },
+    ],
+  });
+
+  console.log({ alice, bob });
 }
+
 main()
   .then(async () => {
     await prisma.$disconnect()

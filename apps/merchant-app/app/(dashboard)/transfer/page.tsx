@@ -1,7 +1,7 @@
 import prisma from "@repo/db/client";
-import { P2pCard } from "../../../components/p2pCard";
+import { AddMoney } from "../../../components/AddMoneyCard";
 import { BalanceCard } from "../../../components/BalanceCard";
-import { P2pTransactions } from "../../../components/P2pTransactions";
+import { OnRampTransactions } from "../../../components/OnRampTransactions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
 
@@ -18,46 +18,24 @@ async function getBalance() {
     }
 }
 
-async function getP2pTransactions() {
+async function getOnRampTransactions() {
     const session = await getServerSession(authOptions);
-    const user = await prisma.user.findUnique({
+    const txns = await prisma.onRampTransaction.findMany({
         where: {
-            id: Number(session?.user?.id)
-        },
-        include: {
-            sentTransfers: true,
-            receivedTransfers: true
+            userId: Number(session?.user?.id)
         }
     });
-
-    const allTransactions = [
-        ...(user?.sentTransfers ?? []).map(transfer => ({
-            ...transfer,
-            type: "SentTransfer",
-            amount: -transfer.amount
-        })),
-        ...(user?.receivedTransfers ?? []).map(transfer => ({
-            ...transfer,
-            type: "ReceivedTransfer"
-        }))
-    ];
-
-    allTransactions.sort((a, b) => {
-        const timeA = a.timestamp;
-        const timeB = b.timestamp;
-        return timeB.getTime() - timeA.getTime();
-    });
-
-    return allTransactions.map(t => ({
-        time: t.timestamp,
+    return txns.map(t => ({
+        time: t.startTime,
         amount: t.amount,
-        from:t.fromUserId
+        status: t.status,
+        provider: t.provider
     }))
 }
 
 export default async function() {
     const balance = await getBalance();
-    const transactions = await getP2pTransactions();
+    const transactions = await getOnRampTransactions();
 
     return <div className="w-screen">
         <div className="text-4xl text-[#6a51a6] pt-8 mb-8 font-bold">
@@ -65,12 +43,12 @@ export default async function() {
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 p-4">
             <div>
-                <P2pCard />
+                <AddMoney />
             </div>
             <div>
                 <BalanceCard amount={balance.amount} locked={balance.locked} />
                 <div className="pt-4">
-                    <P2pTransactions transactions={transactions} />
+                    <OnRampTransactions transactions={transactions} />
                 </div>
             </div>
         </div>

@@ -1,20 +1,17 @@
 import { Card } from "@repo/ui/card"
+import { OnRampStatus } from "@prisma/client";
 
-export const P2pTransactions = ({
+export const OnRampTransactions = ({
     transactions
 }: {
     transactions: {
         time: Date,
-        amount: number
-        from:number
+        amount: number,
+        status: OnRampStatus,
+        provider: string
     }[]
 }) => {
-
-    const sortedTransactions = transactions.sort((a, b) => b.time.getTime() - a.time.getTime());
-
-    const recentTransactions = sortedTransactions.slice(0, 6);
-
-    if (!recentTransactions.length) {
+    if (!transactions.length) {
         return <Card title="Recent Transactions">
             <div className="text-center pb-8 pt-8">
                 No Recent transactions
@@ -23,17 +20,17 @@ export const P2pTransactions = ({
     }
     return <Card title="Recent Transactions">
         <div className="pt-2">
-            {recentTransactions.map(t => <div className="flex justify-between">
+            {transactions.map(t => <div className="flex justify-between">
                 <div>
                     <div className="text-sm">
-                    {(t.amount>0) ? "Recieved INR" : "Sent INR" }
+                        Received INR
                     </div>
                     <div className="text-slate-600 text-xs">
                         {t.time.toDateString()}
                     </div>
                 </div>
                 <div className="flex flex-col justify-center">
-                {(t.amount>0) ? `+ Rs ${t.amount / 100}` : `- Rs ${t.amount * -1 / 100}`}
+                    + Rs {t.amount / 100}
                 </div>
 
             </div>)}
