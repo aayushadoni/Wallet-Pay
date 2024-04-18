@@ -23,7 +23,7 @@ export const P2pTransactions = ({
     }
     return <Card title="Recent Transactions">
         <div className="pt-2">
-            {recentTransactions.map(t => <div className="flex justify-between">
+            {recentTransactions.map(t => <div className="flex justify-between border-b-2 pb-1">
                 <div>
                     <div className="text-sm">
                     {(t.amount>0) ? "Recieved INR" : "Sent INR" }
@@ -32,8 +32,8 @@ export const P2pTransactions = ({
                         {t.time.toDateString()}
                     </div>
                 </div>
-                <div className="flex flex-col justify-center">
-                {(t.amount>0) ? `+ Rs ${t.amount / 100}` : `- Rs ${t.amount * -1 / 100}`}
+                <div className={`flex flex-col justify-center ${t.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                    {(t.amount>0) ? `+ Rs ${t.amount / 100}` : `- Rs ${t.amount * -1 / 100}`}
                 </div>
 
             </div>)}

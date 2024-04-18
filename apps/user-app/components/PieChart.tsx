@@ -1,6 +1,6 @@
 import { Card } from "@repo/ui/card";
 import { ResponsivePie } from '@nivo/pie';
-import { getP2pTransactions } from "../app/lib/actions/getP2pTransactions";
+import { getPieChartData } from "../app/lib/actions/getPieChartData";
 import { useEffect, useState } from 'react';
 import React from 'react';
 
@@ -15,7 +15,7 @@ export const PieChart = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getP2pTransactions();
+      const data = await getPieChartData();
       setPieChartData(data||[]);
     };
     fetchData();

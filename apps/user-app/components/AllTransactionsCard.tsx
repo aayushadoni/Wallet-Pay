@@ -3,46 +3,58 @@ import { Card } from "@repo/ui/card"
 import { getAllTransactions } from '../app/lib/actions/getAllTransactions'
 import { useEffect, useState } from 'react';
 
+const AllTransactionsCard = ({
+    txn
+}: {
+    txn: {
+        type: string;
+        note: string;
+        timestamp: Date;
+        fromUserId: number;
+        toUserId: number;
+        id: number;
+        amount: number;
+        startTime: Date;
+        userId: number;
+    }[] | undefined
+}) => {
+    return (
+        <Card title="Transaction Details">
+            <div className="grid grid-cols-5 gap-1 pt-2">
+                <div className="font-semibold pb-2">Date</div>
+                <div className="font-semibold pb-2">From</div>
+                <div className="font-semibold pb-2">To</div>
+                <div className="font-semibold pb-2">Note</div>
+                <div className="font-semibold pb-2">Amount</div>
 
+                {txn && txn.map((transaction, index) => (
+                    <React.Fragment key={index}>
+                        <div className='pb-2 border-b-2 flex flex-col justify-center'>
+                            <div className="text-sm">
+                            {transaction.id ? transaction.id : '-'}
+                            </div>
+                            <div className="text-slate-600 text-xs">
+                                {transaction.timestamp ? transaction.timestamp.toDateString() : '-'}
+                            </div>
+                        </div>
 
-const AllTransactionsCard = () => {
-
-    //  const [AllTransactions, SetAllTransactions] = useState<{
-    //     type: string;
-    //     note: string;
-    //     id: number;
-    //     amount: number;
-    //   }[]>([]);
-    
-    //   useEffect(() => {
-    //     const fetchData = async () => {
-    //       const data = await getAllTransactions();
-    //       SetAllTransactions(data||[]);
-    //       console.log(data);
-    //     };
-    //     fetchData();
-    //   }, []);
-  return (
-    <Card title="All Transaction">
-        <div className="grid grid-cols-5 gap-1 pt-2">
-            <div>
-                <div className="font-semibold">Date</div>
+                        <div className='pb-2 border-b-2 flex flex-col justify-center'>
+                            {transaction.fromUserId ? transaction.fromUserId : '-'}
+                        </div>
+                        <div className='pb-2 border-b-2 flex flex-col justify-center'>
+                            {transaction.toUserId ? transaction.toUserId : '-'}
+                        </div>
+                        <div className='pb-2 border-b-2 flex flex-col justify-center'>
+                            {transaction.note ? transaction.note : '-'}
+                        </div>
+                        <div className={`pb-2 border-b-2 flex flex-col justify-center ${transaction.type=="SentTransfer" ? 'text-red-500' : 'text-green-500'}`}>
+                            {transaction.type=="SentTransfer" ? transaction.amount ? `- ${transaction.amount/100}` : '-' : transaction.amount ? `+ ${transaction.amount/100}` : '-'}
+                        </div>
+                    </React.Fragment>
+                ))}
             </div>
-            <div>
-                <div className="font-semibold">From</div>
-            </div>
-            <div>
-                <div className="font-semibold">To</div>
-            </div>
-            <div>
-                <div className="font-semibold">Note</div>
-            </div>
-            <div>
-                <div className="font-semibold">Amount</div>
-            </div>
-        </div>
-    </Card>
-  )
+        </Card>
+    );
 }
 
-export default AllTransactionsCard
+export default AllTransactionsCard;

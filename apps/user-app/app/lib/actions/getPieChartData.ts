@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import prisma from "@repo/db/client";
 
-export async function getP2pTransactions() {
+export async function getPieChartData() {
 
     const session = await getServerSession(authOptions);
   

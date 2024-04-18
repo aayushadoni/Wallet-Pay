@@ -5,7 +5,6 @@ import { useState } from "react";
 import { TextInput } from "@repo/ui/textinput";
 import { Select } from "@repo/ui/select";
 import { p2pTransfer } from "../app/lib/actions/p2pTransfer";
-import {TransactionNote} from "@prisma/client";
 
 enum SUPPORTED_Notes {
     Food_Dining = "Food_Dining",

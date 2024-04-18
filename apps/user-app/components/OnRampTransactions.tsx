@@ -39,7 +39,7 @@ export const OnRampTransactions = ({
                                 {t.time.toDateString()}
                             </div>
                         </div>
-                        <div className="flex flex-col justify-center">
+                        <div className={`flex flex-col justify-center ${t.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>
                             + Rs {t.amount / 100}
                         </div>
                     </div>

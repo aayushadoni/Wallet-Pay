@@ -22,6 +22,9 @@ export async function getAllTransactions() {
                     select: {
                         id:true,
                         amount: true,
+                        timestamp:true,
+                        fromUserId:true,
+                        toUserId:true,
                         note: true
                     }
                 },
@@ -29,13 +32,18 @@ export async function getAllTransactions() {
                     select: {
                         id:true,
                         amount: true,
+                        timestamp:true,
+                        fromUserId:true,
+                        toUserId:true,
                         note: true
                     }
                 },
                 OnRampTransaction:{
                     select: {
                         id:true,
-                        amount: true
+                        amount: true,
+                        startTime:true,
+                        userId:true
                     }
                 }
             }
@@ -45,20 +53,28 @@ export async function getAllTransactions() {
             ...(user?.sentTransfers ?? []).map(transfer => ({
                 ...transfer,
                 type: "SentTransfer",
-                amount: -transfer.amount
+                startTime:transfer.timestamp,
+                userId:transfer.fromUserId
             })),
             ...(user?.receivedTransfers ?? []).map(transfer => ({
                 ...transfer,
-                type: "ReceivedTransfer"
+                type: "ReceivedTransfer",
+                startTime:transfer.timestamp,
+                userId:transfer.toUserId
             })),
             ...(user?.OnRampTransaction ?? []).map(onRampTransaction => ({
                 ...onRampTransaction,
                 type: "OnRampTransaction",
-                note: "Bank Transfer"
+                note: "Bank Transfer",
+                timestamp:onRampTransaction.startTime,
+                fromUserId:0,
+                toUserId:onRampTransaction.userId
             }))
         ];
 
-        return allTransactions;
+        const sortedTransactions = allTransactions.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+        return sortedTransactions;
 
     } catch (error) {
         console.error('Error fetching transaction data:', error);
