@@ -2,8 +2,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import prisma from "@repo/db/client";
+import {TransactionNote} from "@prisma/client";
 
-export async function p2pTransfer(to: string, amount: number) {
+export async function p2pTransfer(to: string, amount: number, note:TransactionNote) {
     const session = await getServerSession(authOptions);
     const from = session?.user?.id;
     if (!from) {
@@ -47,7 +48,8 @@ export async function p2pTransfer(to: string, amount: number) {
                 amount:amount,
                 timestamp:new Date(),
                 fromUserId:Number(from),
-                toUserId:toUser.id
+                toUserId:toUser.id,
+                note:note
             }
         });
         

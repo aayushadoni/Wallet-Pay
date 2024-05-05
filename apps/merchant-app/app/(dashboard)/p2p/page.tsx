@@ -20,12 +20,35 @@ async function getBalance() {
 
 async function getP2pTransactions() {
     const session = await getServerSession(authOptions);
-    const txns = await prisma.p2pTransfer.findMany({
+    const user = await prisma.user.findUnique({
         where: {
-            toUserId: Number(session?.user?.id)
+            id: Number(session?.user?.id)
+        },
+        include: {
+            sentTransfers: true,
+            receivedTransfers: true
         }
     });
-    return txns.map(t => ({
+
+    const allTransactions = [
+        ...(user?.sentTransfers ?? []).map(transfer => ({
+            ...transfer,
+            type: "SentTransfer",
+            amount: -transfer.amount
+        })),
+        ...(user?.receivedTransfers ?? []).map(transfer => ({
+            ...transfer,
+            type: "ReceivedTransfer"
+        }))
+    ];
+
+    allTransactions.sort((a, b) => {
+        const timeA = a.timestamp;
+        const timeB = b.timestamp;
+        return timeB.getTime() - timeA.getTime();
+    });
+
+    return allTransactions.map(t => ({
         time: t.timestamp,
         amount: t.amount,
         from:t.fromUserId
@@ -37,8 +60,8 @@ export default async function() {
     const transactions = await getP2pTransactions();
 
     return <div className="w-screen">
-        <div className="text-4xl text-[#6a51a6] pt-8 mb-8 font-bold">
-            Transfer
+        <div className="text-4xl text-[#6a51a6] pt-8 mb-8 font-bold ml-4">
+            P2P
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 p-4">
             <div>
