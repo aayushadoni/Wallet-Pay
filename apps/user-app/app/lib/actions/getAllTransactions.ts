@@ -50,19 +50,19 @@ export async function getAllTransactions() {
         });
 
          const allTransactions = [
-            ...(user?.sentTransfers ?? []).map(transfer => ({
+            ...(user?.sentTransfers ?? []).map((transfer:any) => ({
                 ...transfer,
                 type: "SentTransfer",
                 startTime:transfer.timestamp,
                 userId:transfer.fromUserId
             })),
-            ...(user?.receivedTransfers ?? []).map(transfer => ({
+            ...(user?.receivedTransfers ?? []).map((transfer:any) => ({
                 ...transfer,
                 type: "ReceivedTransfer",
                 startTime:transfer.timestamp,
                 userId:transfer.toUserId
             })),
-            ...(user?.OnRampTransaction ?? []).map(onRampTransaction => ({
+            ...(user?.OnRampTransaction ?? []).map((onRampTransaction:any) => ({
                 ...onRampTransaction,
                 type: "OnRampTransaction",
                 note: "Bank Transfer",
